@@ -71,7 +71,7 @@ nutrition-app/
 ### 1. Clone the repository
 
 ```
-git clone https://github.com/BITIKRAUSHAN/nutrition-dashboard-ai.git
+git clone https://github.com/BitikRaushan/nutrition-dashboard-ai.git
 cd nutrition-dashboard-ai
 ```
 
