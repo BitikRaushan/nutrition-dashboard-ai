@@ -27,11 +27,13 @@ def calculate_nutrition(weight, foods):
         row = df[df["Dish Name"].str.lower().str.contains(food.lower())]
 
         if not row.empty:
-            daily_total["protein"] += row["Protein (g)"].values[0] * qty
-            daily_total["carbs"] += row["Carbohydrates (g)"].values[0] * qty
-            daily_total["fat"] += row["Fats (g)"].values[0] * qty
-            daily_total["calories"] += row["Calories (kcal)"].values[0] * qty
-            daily_total["iron"] += row["Iron (mg)"].values[0] * qty
+            qty_factor = qty / 100  # 🔥 VERY IMPORTANT
+
+           daily_total["protein"] += row["Protein (g)"].values[0] * qty_factor
+           daily_total["carbs"] += row["Carbohydrates (g)"].values[0] * qty_factor
+           daily_total["fat"] += row["Fats (g)"].values[0] * qty_factor
+           daily_total["calories"] += row["Calories (kcal)"].values[0] * qty_factor
+           daily_total["iron"] += row["Iron (mg)"].values[0] * qty_factor
 
     # ===== SUGGESTIONS =====
     suggestions = {}
