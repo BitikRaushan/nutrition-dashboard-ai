@@ -24,7 +24,9 @@ def calculate_nutrition(weight, foods):
         food = item["name"]
         qty = item["qty"]/100
 
-        row = df[df["Dish Name"].str.lower().str.contains(food.lower())]
+        food_clean = food.strip().lower()
+
+        row = df[df["Dish Name"].str.lower().str.contains(food_clean, na=False)]
 
         if not row.empty:
            
