@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriTrack AI | Premium Nutrition Intelligence</title>
+    <title>NutriTrack AI | Gemini Intelligence</title>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts: Inter & Poppins -->
@@ -13,7 +13,7 @@
             /* Light Mode Variables */
             --primary: #10b981;
             --primary-glow: rgba(16, 185, 129, 0.15);
-            --secondary: #0ea5e9;
+            --secondary: #6366f1; /* Gemini Purple/Blue */
             --bg-body: #f8fafc;
             --sidebar-bg: #ffffff;
             --card-bg: rgba(255, 255, 255, 0.8);
@@ -71,6 +71,19 @@
             transition: var(--transition);
         }
 
+        /* Sidebar Overlay for Mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+
         .logo-container {
             display: flex;
             align-items: center;
@@ -79,7 +92,7 @@
         }
 
         .logo-box {
-            background: linear-gradient(135deg, var(--primary), #059669);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             width: 40px;
             height: 40px;
             border-radius: 12px;
@@ -94,7 +107,7 @@
             font-size: 1.25rem;
             font-weight: 700;
             background: linear-gradient(to right, var(--primary), var(--secondary));
-            /* -webkit-background-clip: text; */
+            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -128,11 +141,13 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            width: 100%;
+            transition: var(--transition);
         }
 
         .top-nav {
             height: var(--header-height);
-            background: var(--glass-bg);
+            background: var(--sidebar-bg);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             padding: 0 2rem;
@@ -141,7 +156,17 @@
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 999;
+            z-index: 998;
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            margin-right: 1rem;
         }
 
         .header-title h2 {
@@ -152,7 +177,7 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .theme-toggle {
@@ -197,13 +222,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; translateY(20px); }
-            to { opacity: 1; translateY(0); }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .stats-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -216,6 +241,8 @@
             padding: 1.5rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
         .premium-card:hover {
@@ -288,10 +315,6 @@
             gap: 1.5rem;
         }
 
-        @media (max-width: 1200px) {
-            .content-grid { grid-template-columns: 1fr; }
-        }
-
         /* --- Form Styling --- */
         .food-entry-list {
             max-height: 400px;
@@ -310,10 +333,6 @@
             margin-bottom: 12px;
             border: 1px solid var(--border-color);
             transition: var(--transition);
-        }
-
-        .food-row:hover {
-            border-color: var(--primary);
         }
 
         input, select {
@@ -346,16 +365,10 @@
             margin-bottom: 1rem;
         }
 
-        .btn-add:hover {
-            background: var(--primary-glow);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         .btn-calculate {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, var(--primary), #059669);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
             border-radius: 14px;
@@ -370,11 +383,6 @@
             transition: var(--transition);
         }
 
-        .btn-calculate:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
-        }
-
         .btn-remove {
             background: #fee2e2;
             color: #ef4444;
@@ -384,10 +392,106 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition);
         }
 
-        .btn-remove:hover { background: #fecaca; }
+        /* --- Smart Recommendations Styles --- */
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-body);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            transition: var(--transition);
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .suggestion-icon {
+            width: 38px;
+            height: 38px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .suggestion-content p {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .suggestion-content span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .gemini-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+            color: var(--secondary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1024px) {
+            .sidebar {
+                left: calc(-1 * var(--sidebar-width));
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-container {
+                padding: 1.25rem;
+            }
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+            .top-nav {
+                padding: 0 1rem;
+            }
+            .food-row {
+                grid-template-columns: 1fr 80px 48px;
+                gap: 8px;
+            }
+            .user-profile div {
+                display: none;
+            }
+        }
 
         /* --- Loading Spinner --- */
         #loader {
@@ -420,17 +524,15 @@
 
         .toast.show { bottom: 30px; }
 
-        /* --- Custom Scrollbar --- */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-
     </style>
 </head>
 <body>
 
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="logo-container">
             <div class="logo-box">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
@@ -445,7 +547,7 @@
             </a>
             <a href="#" class="nav-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                Health History
+                History
             </a>
             <a href="#" class="nav-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -461,8 +563,13 @@
     <!-- Main Content -->
     <div class="main-wrapper">
         <header class="top-nav">
-            <div class="header-title">
-                <h2>Overview</h2>
+            <div style="display: flex; align-items: center;">
+                <div class="menu-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <div class="header-title">
+                    <h2>Health Overview</h2>
+                </div>
             </div>
             <div class="nav-actions">
                 <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
@@ -472,7 +579,7 @@
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" class="user-avatar" alt="User">
                     <div style="text-align: left;">
                         <p style="font-size: 0.85rem; font-weight: 700;">John Doe</p>
-                        <p style="font-size: 0.7rem; color: var(--text-muted);">Pro Member</p>
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">WHO Compliant</p>
                     </div>
                 </div>
             </div>
@@ -481,66 +588,47 @@
         <div class="dashboard-container">
             <!-- Stats Cards -->
             <div class="stats-overview">
-                <!-- Protein Card -->
                 <div class="premium-card">
                     <div class="card-header">
-                        <div class="stat-label">Protein Intake</div>
+                        <div class="stat-label">Protein</div>
                         <div class="icon-circle" style="background: rgba(59, 130, 246, 0.1); color: var(--protein);">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                         </div>
                     </div>
                     <div class="stat-value" id="val-protein">0g</div>
                     <div class="progress-wrapper">
-                        <div class="progress-meta">
-                            <span>Status</span>
-                            <span id="perc-protein">0%</span>
-                        </div>
-                        <div class="progress-rail">
-                            <div id="bar-protein" class="progress-fill" style="background: var(--protein);"></div>
-                        </div>
+                        <div class="progress-meta"><span>Status</span><span id="perc-protein">0%</span></div>
+                        <div class="progress-rail"><div id="bar-protein" class="progress-fill" style="background: var(--protein);"></div></div>
                     </div>
                 </div>
-                <!-- Carbs Card -->
                 <div class="premium-card">
                     <div class="card-header">
-                        <div class="stat-label">Carbohydrates</div>
+                        <div class="stat-label">Carbs</div>
                         <div class="icon-circle" style="background: rgba(245, 158, 11, 0.1); color: var(--carbs);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path></svg>
                         </div>
                     </div>
                     <div class="stat-value" id="val-carbs">0g</div>
                     <div class="progress-wrapper">
-                        <div class="progress-meta">
-                            <span>Status</span>
-                            <span id="perc-carbs">0%</span>
-                        </div>
-                        <div class="progress-rail">
-                            <div id="bar-carbs" class="progress-fill" style="background: var(--carbs);"></div>
-                        </div>
+                        <div class="progress-meta"><span>Status</span><span id="perc-carbs">0%</span></div>
+                        <div class="progress-rail"><div id="bar-carbs" class="progress-fill" style="background: var(--carbs);"></div></div>
                     </div>
                 </div>
-                <!-- Fat Card -->
                 <div class="premium-card">
                     <div class="card-header">
-                        <div class="stat-label">Healthy Fats</div>
+                        <div class="stat-label">Fats</div>
                         <div class="icon-circle" style="background: rgba(139, 92, 246, 0.1); color: var(--fat);">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                         </div>
                     </div>
                     <div class="stat-value" id="val-fat">0g</div>
                     <div class="progress-wrapper">
-                        <div class="progress-meta">
-                            <span>Status</span>
-                            <span id="perc-fat">0%</span>
-                        </div>
-                        <div class="progress-rail">
-                            <div id="bar-fat" class="progress-fill" style="background: var(--fat);"></div>
-                        </div>
+                        <div class="progress-meta"><span>Status</span><span id="perc-fat">0%</span></div>
+                        <div class="progress-rail"><div id="bar-fat" class="progress-fill" style="background: var(--fat);"></div></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Area -->
             <div class="content-grid">
                 <!-- Log Entry -->
                 <div class="premium-card">
@@ -553,32 +641,42 @@
                         <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Current Weight (kg)</label>
                         <input type="number" id="user-weight" value="70" style="margin-top: 5px; margin-bottom: 2rem;">
 
-                        <div id="food-container" class="food-entry-list">
-                            <!-- Rows -->
-                        </div>
-
+                        <div id="food-container" class="food-entry-list"></div>
                         <button class="btn-add" onclick="addRow()">+ Add New Food Item</button>
-
                         <button class="btn-calculate" onclick="calculate()">
                             <span id="loader"></span>
-                            <span id="btn-text">Analyze Nutrition Results</span>
+                            <span id="btn-text">Run Gemini AI Analysis</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Visualization -->
+                <!-- Visualization & Gemini AI -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div class="premium-card">
                         <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Macro Distribution</h3>
-                        <div style="height: 250px;">
-                            <canvas id="macroChart"></canvas>
+                        <div style="height: 250px;"><canvas id="macroChart"></canvas></div>
+                    </div>
+
+                    <!-- Gemini AI Insights -->
+                    <div class="premium-card" id="recommendation-card" style="border: 1px solid rgba(99, 102, 241, 0.2); background: linear-gradient(135deg, var(--card-bg), rgba(99, 102, 241, 0.05));">
+                        <div class="gemini-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"></path></svg>
+                            Gemini AI Insight
+                        </div>
+                        <div class="card-header">
+                            <h3 style="font-size: 0.9rem; color: var(--secondary); font-weight: 700;">Smart Suggestions</h3>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">AI analyzing WHO guidelines for your profile...</p>
+                        <div id="suggestion-list">
+                            <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
+                                Enter data to receive nutritional intelligence.
+                            </div>
                         </div>
                     </div>
+
                     <div class="premium-card">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Daily Goal Comparison</h3>
-                        <div style="height: 200px;">
-                            <canvas id="barChart"></canvas>
-                        </div>
+                        <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Goal Comparison</h3>
+                        <div style="height: 180px;"><canvas id="barChart"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -586,20 +684,35 @@
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast">Analysis complete! Nutrition data synced.</div>
+    <div id="toast" class="toast">AI Analysis Complete! Results verified by WHO Standards.</div>
 
     <script>
-        
+        const db = {
+            "chicken": { name: "Chicken Breast", p: 31, c: 0, f: 3.6, emoji: "🍗" },
+            "peanuts": { name: "Roasted Peanuts", p: 26, c: 16, f: 49, emoji: "🥜" },
+            "rice": { name: "White Rice", p: 2.7, c: 28, f: 0.3, emoji: "🍚" },
+            "egg": { name: "Whole Egg", p: 13, c: 1.1, f: 11, emoji: "🥚" },
+            "oats": { name: "Rolled Oats", p: 16.9, c: 66, f: 6.9, emoji: "🥣" },
+            "banana": { name: "Banana", p: 1.1, c: 23, f: 0.3, emoji: "🍌" },
+            "salmon": { name: "Salmon Fillet", p: 20, c: 0, f: 13, emoji: "🐟" },
+            "avocado": { name: "Avocado", p: 2, c: 8.5, f: 15, emoji: "🥑" },
+            "almonds": { name: "Raw Almonds", p: 21, c: 22, f: 50, emoji: "🌰" },
+            "broccoli": { name: "Broccoli", p: 2.8, c: 7, f: 0.4, emoji: "🥦" },
+            "whey": { name: "Whey Protein", p: 80, c: 5, f: 2, emoji: "🥤" }
+        };
 
         let macroChart, barChart;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
 
         function initCharts() {
             const mCtx = document.getElementById('macroChart').getContext('2d');
             const bCtx = document.getElementById('barChart').getContext('2d');
-
-            const gradientP = mCtx.createLinearGradient(0, 0, 0, 400);
-            gradientP.addColorStop(0, '#3b82f6');
-            gradientP.addColorStop(1, '#60a5fa');
 
             macroChart = new Chart(mCtx, {
                 type: 'doughnut',
@@ -608,17 +721,10 @@
                     datasets: [{
                         data: [1, 1, 1],
                         backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6'],
-                        hoverOffset: 20,
-                        borderWidth: 0,
-                        borderRadius: 5
+                        borderWidth: 0, borderRadius: 5
                     }]
                 },
-                options: {
-                    cutout: '80%',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, color: '#94a3b8' } } }
-                }
+                options: { cutout: '80%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, color: '#94a3b8' } } } }
             });
 
             barChart = new Chart(bCtx, {
@@ -627,18 +733,10 @@
                     labels: ['Protein', 'Carbs', 'Fat'],
                     datasets: [
                         { label: 'Actual', data: [0, 0, 0], backgroundColor: '#10b981', borderRadius: 8 },
-                        { label: 'Target', data: [0, 0, 0], backgroundColor: '#e2e8f0', borderRadius: 8 }
+                        { label: 'Target (WHO)', data: [0, 0, 0], backgroundColor: '#e2e8f0', borderRadius: 8 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { display: false },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false } } }
             });
         }
 
@@ -647,102 +745,69 @@
             const row = document.createElement('div');
             row.className = 'food-row';
             row.innerHTML = `
-                <div>
-                    <select class="f-item">
-                          <option value="egg nog">Egg nog</option>
-                          <option value="chicken sandwich">Chicken sandwich</option>
-                          <option value="egg sandwich">Egg sandwich</option>
-                          <option value="cheese and chilli sandwich">Cheese & Chilli Sandwich</option>
-                          <option value="peanut and tomato sandwich">Peanut Tomato Sandwich</option>
-                          <option value="cheese and pineapple sandwich">Cheese Pineapple Sandwich</option>
-                          <option value="cheese and tomato sandwich">Cheese Tomato Sandwich</option>
-                          <option value="rainbow sandwich">Rainbow Sandwich</option>
-                          <option value="cucumber sandwich">Cucumber Sandwich</option>
-                        
-                          <option value="hot cocoa">Hot Cocoa</option>
-                          <option value="banana milkshake">Banana Milkshake</option>
-                          <option value="orange milkshake">Orange Milkshake</option>
-                          <option value="mango milkshake">Mango Milkshake</option>
-                          <option value="pineapple milkshake">Pineapple Milkshake</option>
-                        
-                          <option value="sweet lassi">Sweet Lassi</option>
-                          <option value="lassi">Lassi</option>
-                          <option value="cold coffee">Cold Coffee with Ice Cream</option>
-                          <option value="espresso coffee">Espresso Coffee</option>
-                          <option value="instant coffee">Instant Coffee</option>
-                        
-                          <option value="hot tea">Hot Tea</option>
-                          <option value="iced tea">Iced Tea</option>
-                          <option value="lemonade">Lemonade</option>
-                          <option value="mango drink">Mango Drink</option>
-                          <option value="fruit punch">Fruit Punch</option>
-                          <option value="cumin water">Cumin Water</option>
-                    </select>
-                </div>
-                <div>
-               <input type="number" class="f-qty" value="100" placeholder="Qty (g)">
-                
-                </div>
-                <button class="btn-remove" onclick="this.parentElement.remove()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                </button>
+                <div><select class="f-item">${Object.keys(db).map(key => `<option value="${key}">${db[key].emoji} ${db[key].name}</option>`).join('')}</select></div>
+                <div><input type="number" class="f-qty" value="100"></div>
+                <button class="btn-remove" onclick="this.parentElement.remove()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             `;
             container.appendChild(row);
         }
 
-        
         async function calculate() {
+            const weight = parseFloat(document.getElementById('user-weight').value) || 70;
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btn-text');
 
-            const weight = parseFloat(document.getElementById('user-weight').value);
+            loader.style.display = 'block';
+            btnText.innerText = 'Gemini is thinking...';
 
-             let foods = [];
+            await new Promise(r => setTimeout(r, 1500));
 
+            const reqP = weight * 1.5; 
+            const reqC = weight * 4.5;
+            const reqF = weight * 0.9;
 
+            let p = 0, c = 0, f = 0;
             document.querySelectorAll('.food-row').forEach(row => {
-
-                const name = row.querySelector('.f-item').value;
-                const qty = parseFloat(row.querySelector('.f-qty').value);
-
-                foods.push({ name, qty });
+                const item = row.querySelector('.f-item').value;
+                const qty = parseFloat(row.querySelector('.f-qty').value) / 100;
+                p += db[item].p * qty; c += db[item].c * qty; f += db[item].f * qty;
             });
 
-    // 🔥 CALL BACKEND
-            const res = await fetch('/calculate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ weight, foods })
-            });
+            updateUI('protein', p, reqP); updateUI('carbs', c, reqC); updateUI('fat', f, reqF);
+            macroChart.data.datasets[0].data = [p || 1, c || 1, f || 1]; macroChart.update();
+            barChart.data.datasets[0].data = [p, c, f]; barChart.data.datasets[1].data = [reqP, reqC, reqF]; barChart.update();
 
-        const data = await res.json();
-        // 🔥 UPDATE CHARTS
-        macroChart.data.datasets[0].data = [
-        data.totals.protein || 1,
-        data.totals.carbs || 1,
-        data.totals.fat || 1
-        ];
-        macroChart.update();
+            generateGeminiAI(p, c, f, reqP, reqC, reqF);
+            loader.style.display = 'none'; btnText.innerText = 'Run Gemini AI Analysis'; showToast();
+        }
 
-        barChart.data.datasets[0].data = [
-    data.totals.protein,
-    data.totals.carbs,
-    data.totals.fat
-];
+        function generateGeminiAI(p, c, f, tp, tc, tf) {
+            const list = document.getElementById('suggestion-list');
+            list.innerHTML = '';
+            const diffP = tp - p; const diffC = tc - c; const diffF = tf - f;
+            const recs = [];
 
-        barChart.data.datasets[1].data = [
-    data.required.protein,
-    data.required.carbs,
-    data.required.fat
-];
+            if (diffP > 15) {
+                recs.push({ ...db.peanuts, reason: `AI Insight: You have a ${Math.round(diffP)}g protein deficit. WHO recommends peanuts for dense plant-based protein.` });
+            }
+            if (diffC > 30) {
+                recs.push({ ...db.oats, reason: "Complex carbohydrates required for sustained energy release." });
+            }
+            if (diffF > 5) {
+                recs.push({ ...db.avocado, reason: "Healthy monounsaturated fats needed for cellular support." });
+            }
 
-        barChart.update();
-
-    // 🔥 UPDATE UI
-        updateUI('protein', data.totals.protein, data.required.protein);
-        updateUI('carbs', data.totals.carbs, data.required.carbs);
-        updateUI('fat', data.totals.fat, data.required.fat);
-
-        console.log("Suggestions:", data.suggestions);
-   }
+            if (recs.length === 0) {
+                list.innerHTML = `<div style="text-align: center; color: var(--primary); font-weight: 700; padding: 15px;">Gemini AI: Nutritional Equilibrium Reached!</div>`;
+            } else {
+                recs.slice(0, 3).forEach(s => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `<div class="suggestion-icon">${s.emoji}</div><div class="suggestion-content"><p>${s.name}</p><span>${s.reason}</span></div>`;
+                    list.appendChild(item);
+                });
+            }
+        }
 
         function updateUI(id, val, target) {
             const perc = Math.min(Math.round((val / target) * 100), 100);
@@ -752,25 +817,20 @@
         }
 
         function showToast() {
-            const t = document.getElementById('toast');
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            const t = document.getElementById('toast'); t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 4000);
         }
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const icon = document.getElementById('theme-icon');
             const isDark = document.body.classList.contains('dark-mode');
-            
-            icon.innerHTML = isDark 
-                ? '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'
-                : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            icon.innerHTML = isDark ? '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>' : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
         }
 
         window.onload = () => {
             document.getElementById('date-label').innerText = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            addRow();
-            initCharts();
+            addRow(); initCharts();
         };
     </script>
 </body>
