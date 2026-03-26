@@ -7,15 +7,42 @@ import mysql.connector
 app = Flask(__name__)
 CORS(app)
 
-#  MySQL 
-conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="1234",
-    database="Diet"
-)
+# #  MySQL 
+# conn = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     password="1234",
+#     database="Diet"
+# )
 
-cursor = conn.cursor()
+# cursor = conn.cursor()
+if os.environ.get("RENDER"):
+    # 🌐 Running on Render → use SQLite
+    import sqlite3
+    conn = sqlite3.connect('diet.db', check_same_thread=False)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT UNIQUE,
+        password TEXT
+    )
+    ''')
+
+    conn.commit()
+
+else:
+    # 💻 Running locally → use MySQL
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="1234",
+        database="Diet"
+    )
+    cursor = conn.cursor()
 
 #  PART  ADD
 @app.route('/')
@@ -32,9 +59,13 @@ def login():
 
     email = data['email']
     password = data['password']
+    if os.environ.get("RENDER"):
+        cursor.execute("SELECT id,name FROM users WHERE email=? AND password=?", (email, password))
+    else:
+        cursor.execute("SELECT id,name FROM users WHERE email=%s AND password=%s", (email, password))
 
-    query = "SELECT id, name FROM users WHERE email=%s AND password=%s"
-    cursor.execute(query, (email, password))
+    # query = "SELECT id, name FROM users WHERE email=%s AND password=%s"
+    # cursor.execute(query, (email, password))
     user = cursor.fetchone()
 
     if user:
