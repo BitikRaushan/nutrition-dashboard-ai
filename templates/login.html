@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - NutriTrack</title>
+</head>
+<body>
+
+<div id="auth-view">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-box" style="margin: 0 auto;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                </div>
+                <h2 id="auth-title">Welcome Back</h2>
+                <p id="auth-subtitle">Sign in to your NutriTrack account</p>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label>Full Name</label>
+                    <input type="text" id="auth-name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-pass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="auth-btn" id="auth-submit-btn">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <span id="auth-toggle-text">Don't have an account?</span>
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn">Create one</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+    let isLogin = true;
+
+function toggleAuthMode() {
+
+    isLogin = !isLogin;
+
+    document.getElementById('auth-title').innerText = isLogin ? "Welcome Back" : "Create Account";
+    document.getElementById('auth-subtitle').innerText = isLogin 
+        ? "Sign in to your NutriTrack account" 
+        : "Create your NutriTrack account";
+
+    document.getElementById('auth-submit-btn').innerText = isLogin ? "Sign In" : "Register";
+
+    document.getElementById('auth-toggle-text').innerText = isLogin 
+        ? "Don't have an account?" 
+        : "Already have an account?";
+
+    document.getElementById('auth-toggle-btn').innerText = isLogin ? "Create one" : "Login";
+
+    document.getElementById('name-group').style.display = isLogin ? "none" : "block";
+}
+
+async function handleAuth(event) {
+    event.preventDefault();  // stop page reload
+
+    if (isLogin) {
+        await login();
+    } else {
+        await register();
+    }
+}
+async function login() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-pass').value;
+
+    if (!email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (data.user_id) {
+        localStorage.setItem("user_id", data.user_id);
+        alert("Login successful!");
+        window.location.href = "/";
+    } else {
+        alert(data.error || "Invalid login");
+    }
+}
+
+async function register() {
+    const name = document.getElementById('auth-name').value;
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-pass').value;
+
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name,
+            email,
+            password
+        })
+    });
+
+    const data = await res.json();
+    alert(data.message || "Registered! Now login.");
+}
+</script>
+
+</body>
+</html>

@@ -53,6 +53,101 @@
             transition: var(--transition);
             overflow-x: hidden;
             display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Auth View --- */
+        #auth-view {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent),
+                        radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent);
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            animation: fadeInAuth 0.8s ease-out;
+        }
+
+        @keyframes fadeInAuth {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .auth-card label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        .auth-footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 5px;
         }
 
         /* --- Sidebar --- */
@@ -71,7 +166,6 @@
             transition: var(--transition);
         }
 
-        /* Sidebar Overlay for Mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -127,11 +221,6 @@
         .nav-link.active {
             background: var(--primary-glow);
             color: var(--primary);
-        }
-
-        .nav-link:hover:not(.active) {
-            background: var(--bg-body);
-            color: var(--text-main);
         }
 
         /* --- Main Content --- */
@@ -190,10 +279,6 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition);
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--primary);
         }
 
         .user-profile {
@@ -281,7 +366,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* --- Custom Progress Bars --- */
+        /* --- Progress Bars --- */
         .progress-wrapper {
             margin-top: 1rem;
         }
@@ -308,7 +393,6 @@
             transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* --- Content Grid --- */
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 400px;
@@ -394,7 +478,7 @@
             cursor: pointer;
         }
 
-        /* --- Smart Recommendations Styles --- */
+        /* --- Smart Recommendations --- */
         .suggestion-item {
             display: flex;
             align-items: center;
@@ -528,155 +612,189 @@
 </head>
 <body>
 
-    <!-- Overlay -->
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="logo-container">
-            <div class="logo-box">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+    <!-- Auth View (Shown by default) -->
+    <div id="auth-view">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-box" style="margin: 0 auto;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                </div>
+                <h2 id="auth-title">Welcome Back</h2>
+                <p id="auth-subtitle">Sign in to your NutriTrack account</p>
             </div>
-            <span class="logo-text">NutriTrack AI</span>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label>Full Name</label>
+                    <input type="text" id="auth-name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-pass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="auth-btn" id="auth-submit-btn">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <span id="auth-toggle-text">Don't have an account?</span>
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn">Create one</button>
+            </div>
         </div>
-        
-        <nav>
-            <a href="#" class="nav-link active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Dashboard
-            </a>
-            <a href="#" class="nav-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                History
-            </a>
-            <a href="#" class="nav-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                My Profile
-            </a>
-            <a href="#" class="nav-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                Settings
-            </a>
-        </nav>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-        <header class="top-nav">
-            <div style="display: flex; align-items: center;">
-                <div class="menu-toggle" onclick="toggleSidebar()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <!-- Dashboard View (Hidden by default) -->
+    <div id="dashboard-view" style="display: none; width: 100%;">
+        <!-- Overlay -->
+        <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <div class="logo-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                 </div>
-                <div class="header-title">
-                    <h2>Health Overview</h2>
-                </div>
+                <span class="logo-text">NutriTrack AI</span>
             </div>
-            <div class="nav-actions">
-                <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
-                    <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </div>
-                <div class="user-profile">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" class="user-avatar" alt="User">
-                    <div style="text-align: left;">
-                        <p style="font-size: 0.85rem; font-weight: 700;">John Doe</p>
-                        <p style="font-size: 0.7rem; color: var(--text-muted);">WHO Compliant</p>
+            
+            <nav>
+                <a href="#" class="nav-link active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    History
+                </a>
+                <a href="#" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    My Profile
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <header class="top-nav">
+                <div style="display: flex; align-items: center;">
+                    <div class="menu-toggle" onclick="toggleSidebar()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </div>
+                    <div class="header-title">
+                        <h2>Health Overview</h2>
                     </div>
                 </div>
-            </div>
-        </header>
-
-        <div class="dashboard-container">
-            <!-- Stats Cards -->
-            <div class="stats-overview">
-                <div class="premium-card">
-                    <div class="card-header">
-                        <div class="stat-label">Protein</div>
-                        <div class="icon-circle" style="background: rgba(59, 130, 246, 0.1); color: var(--protein);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+                        <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" class="user-avatar" id="nav-avatar" alt="User">
+                        <div style="text-align: left;">
+                            <p style="font-size: 0.85rem; font-weight: 700;" id="display-name">User Name</p>
+                            <p style="font-size: 0.7rem; color: var(--text-muted);">Pro Member</p>
                         </div>
                     </div>
-                    <div class="stat-value" id="val-protein">0g</div>
-                    <div class="progress-wrapper">
-                        <div class="progress-meta"><span>Status</span><span id="perc-protein">0%</span></div>
-                        <div class="progress-rail"><div id="bar-protein" class="progress-fill" style="background: var(--protein);"></div></div>
-                    </div>
                 </div>
-                <div class="premium-card">
-                    <div class="card-header">
-                        <div class="stat-label">Carbs</div>
-                        <div class="icon-circle" style="background: rgba(245, 158, 11, 0.1); color: var(--carbs);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path></svg>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="val-carbs">0g</div>
-                    <div class="progress-wrapper">
-                        <div class="progress-meta"><span>Status</span><span id="perc-carbs">0%</span></div>
-                        <div class="progress-rail"><div id="bar-carbs" class="progress-fill" style="background: var(--carbs);"></div></div>
-                    </div>
-                </div>
-                <div class="premium-card">
-                    <div class="card-header">
-                        <div class="stat-label">Fats</div>
-                        <div class="icon-circle" style="background: rgba(139, 92, 246, 0.1); color: var(--fat);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="val-fat">0g</div>
-                    <div class="progress-wrapper">
-                        <div class="progress-meta"><span>Status</span><span id="perc-fat">0%</span></div>
-                        <div class="progress-rail"><div id="bar-fat" class="progress-fill" style="background: var(--fat);"></div></div>
-                    </div>
-                </div>
-            </div>
+            </header>
 
-            <div class="content-grid">
-                <!-- Log Entry -->
-                <div class="premium-card">
-                    <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                        <h3 style="font-size: 1rem;">Daily Nutrition Log</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-muted);" id="date-label"></p>
-                    </div>
-                    
-                    <div style="margin-top: 1.5rem;">
-                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Current Weight (kg)</label>
-                        <input type="number" id="user-weight" value="70" style="margin-top: 5px; margin-bottom: 2rem;">
-
-                        <div id="food-container" class="food-entry-list"></div>
-                        <button class="btn-add" onclick="addRow()">+ Add New Food Item</button>
-                        <button class="btn-calculate" onclick="calculate()">
-                            <span id="loader"></span>
-                            <span id="btn-text">Run Gemini AI Analysis</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Visualization & Gemini AI -->
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="dashboard-container">
+                <!-- Stats Cards -->
+                <div class="stats-overview">
                     <div class="premium-card">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Macro Distribution</h3>
-                        <div style="height: 250px;"><canvas id="macroChart"></canvas></div>
-                    </div>
-
-                    <!-- Gemini AI Insights -->
-                    <div class="premium-card" id="recommendation-card" style="border: 1px solid rgba(99, 102, 241, 0.2); background: linear-gradient(135deg, var(--card-bg), rgba(99, 102, 241, 0.05));">
-                        <div class="gemini-badge">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"></path></svg>
-                            Gemini AI Insight
-                        </div>
                         <div class="card-header">
-                            <h3 style="font-size: 0.9rem; color: var(--secondary); font-weight: 700;">Smart Suggestions</h3>
-                        </div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">AI analyzing WHO guidelines for your profile...</p>
-                        <div id="suggestion-list">
-                            <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                                Enter data to receive nutritional intelligence.
+                            <div class="stat-label">Protein</div>
+                            <div class="icon-circle" style="background: rgba(59, 130, 246, 0.1); color: var(--protein);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                             </div>
                         </div>
+                        <div class="stat-value" id="val-protein">0g</div>
+                        <div class="progress-wrapper">
+                            <div class="progress-meta"><span>Status</span><span id="perc-protein">0%</span></div>
+                            <div class="progress-rail"><div id="bar-protein" class="progress-fill" style="background: var(--protein);"></div></div>
+                        </div>
+                    </div>
+                    <div class="premium-card">
+                        <div class="card-header">
+                            <div class="stat-label">Carbs</div>
+                            <div class="icon-circle" style="background: rgba(245, 158, 11, 0.1); color: var(--carbs);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="val-carbs">0g</div>
+                        <div class="progress-wrapper">
+                            <div class="progress-meta"><span>Status</span><span id="perc-carbs">0%</span></div>
+                            <div class="progress-rail"><div id="bar-carbs" class="progress-fill" style="background: var(--carbs);"></div></div>
+                        </div>
+                    </div>
+                    <div class="premium-card">
+                        <div class="card-header">
+                            <div class="stat-label">Fats</div>
+                            <div class="icon-circle" style="background: rgba(139, 92, 246, 0.1); color: var(--fat);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="val-fat">0g</div>
+                        <div class="progress-wrapper">
+                            <div class="progress-meta"><span>Status</span><span id="perc-fat">0%</span></div>
+                            <div class="progress-rail"><div id="bar-fat" class="progress-fill" style="background: var(--fat);"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <div class="premium-card">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                            <h3 style="font-size: 1rem;">Daily Nutrition Log</h3>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);" id="date-label"></p>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Current Weight (kg)</label>
+                            <input type="number" id="user-weight" value="70" style="margin-top: 5px; margin-bottom: 2rem;">
+
+                            <div id="food-container" class="food-entry-list"></div>
+                            <button class="btn-add" onclick="addRow()">+ Add New Food Item</button>
+                            <button class="btn-calculate" onclick="calculate()">
+                                <span id="loader"></span>
+                                <span id="btn-text">Run Gemini AI Analysis</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="premium-card">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Goal Comparison</h3>
-                        <div style="height: 180px;"><canvas id="barChart"></canvas></div>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="premium-card">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Macro Distribution</h3>
+                            <div style="height: 250px;"><canvas id="macroChart"></canvas></div>
+                        </div>
+
+                        <div class="premium-card" id="recommendation-card" style="border: 1px solid rgba(99, 102, 241, 0.2); background: linear-gradient(135deg, var(--card-bg), rgba(99, 102, 241, 0.05));">
+                            <div class="gemini-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"></path></svg>
+                                Gemini AI Insight
+                            </div>
+                            <div class="card-header">
+                                <h3 style="font-size: 0.9rem; color: var(--secondary); font-weight: 700;">Smart Suggestions</h3>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">AI analyzing WHO guidelines for your profile...</p>
+                            <div id="suggestion-list">
+                                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
+                                    Enter data to receive nutritional intelligence.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--text-muted);">Goal Comparison</h3>
+                            <div style="height: 180px;"><canvas id="barChart"></canvas></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -687,6 +805,19 @@
     <div id="toast" class="toast">AI Analysis Complete! Results verified by WHO Standards.</div>
 
     <script>
+       window.onload = function () {
+            const user_id = localStorage.getItem("user_id");
+
+        if (user_id) {
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+
+            const savedName = localStorage.getItem("user_name");
+            document.getElementById('display-name').innerText = savedName || "User";
+
+            initDashboard();
+        }
+    };
         const db = {
             "chicken": { name: "Chicken Breast", p: 31, c: 0, f: 3.6, emoji: "🍗" },
             "peanuts": { name: "Roasted Peanuts", p: 26, c: 16, f: 49, emoji: "🥜" },
@@ -702,6 +833,87 @@
         };
 
         let macroChart, barChart;
+        let isRegister = false;
+
+        // Auth Logic
+        function toggleAuthMode() {
+            isRegister = !isRegister;
+            const title = document.getElementById('auth-title');
+            const sub = document.getElementById('auth-subtitle');
+            const nameGroup = document.getElementById('name-group');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleText = document.getElementById('auth-toggle-text');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+
+            if (isRegister) {
+                title.innerText = "Join NutriTrack";
+                sub.innerText = "Create your AI nutrition profile";
+                nameGroup.style.display = "block";
+                submitBtn.innerText = "Create Account";
+                toggleText.innerText = "Already have an account?";
+                toggleBtn.innerText = "Sign In";
+            } else {
+                title.innerText = "Welcome Back";
+                sub.innerText = "Sign in to your NutriTrack account";
+                nameGroup.style.display = "none";
+                submitBtn.innerText = "Sign In";
+                toggleText.innerText = "Don't have an account?";
+                toggleBtn.innerText = "Create one";
+            }
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-pass').value;
+        const name = document.getElementById('auth-name').value;
+
+        if (isRegister) {
+        // 🔥 REGISTER
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const data = await res.json();
+            alert(data.message || "Registered! Now login.");
+            return;
+        }
+
+    // 🔥 LOGIN
+        const res = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (data.user_id) {
+            localStorage.setItem("user_id", data.user_id);
+            localStorage.setItem("user_name", data.name);
+          
+
+        // 👇 Show dashboard
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+            document.getElementById('display-name').innerText = data.name;
+
+            document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name}`;
+
+            initDashboard();
+        } else {
+            alert("Invalid login");
+        }
+    }
+
+        function initDashboard() {
+            document.getElementById('date-label').innerText = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            if (!macroChart) initCharts();
+            if (document.querySelectorAll('.food-row').length === 0) addRow();
+        }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -788,17 +1000,17 @@
             const recs = [];
 
             if (diffP > 15) {
-                recs.push({ ...db.peanuts, reason: `AI Insight: You have a ${Math.round(diffP)}g protein deficit. WHO recommends peanuts for dense plant-based protein.` });
+                recs.push({ ...db.peanuts, reason: `AI Insight: You have a ${Math.round(diffP)}g protein deficit. Gemini recommends roasted peanuts to bridge this gap.` });
             }
             if (diffC > 30) {
-                recs.push({ ...db.oats, reason: "Complex carbohydrates required for sustained energy release." });
+                recs.push({ ...db.oats, reason: "Complex carbs required. Add oats to your next meal for sustained energy." });
             }
             if (diffF > 5) {
-                recs.push({ ...db.avocado, reason: "Healthy monounsaturated fats needed for cellular support." });
+                recs.push({ ...db.avocado, reason: "Incorporate healthy fats. Avocado is ideal for your metabolic needs." });
             }
 
             if (recs.length === 0) {
-                list.innerHTML = `<div style="text-align: center; color: var(--primary); font-weight: 700; padding: 15px;">Gemini AI: Nutritional Equilibrium Reached!</div>`;
+                list.innerHTML = `<div style="text-align: center; color: var(--primary); font-weight: 700; padding: 15px;">Gemini AI: Nutritional Balance Achieved!</div>`;
             } else {
                 recs.slice(0, 3).forEach(s => {
                     const item = document.createElement('div');
@@ -826,12 +1038,11 @@
             const icon = document.getElementById('theme-icon');
             const isDark = document.body.classList.contains('dark-mode');
             icon.innerHTML = isDark ? '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>' : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        }function logout() {
+            localStorage.removeItem("user_id");
+            location.reload();
         }
 
-        window.onload = () => {
-            document.getElementById('date-label').innerText = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            addRow(); initCharts();
-        };
     </script>
 </body>
 </html>

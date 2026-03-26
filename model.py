@@ -37,36 +37,62 @@ def calculate_nutrition(weight, foods):
            daily_total["calories"] += row["Calories (kcal)"].values[0] * qty
            daily_total["iron"] += row["Iron (mg)"].values[0] * qty
 
+    # # ===== SUGGESTIONS =====
+    # suggestions = {}
+
+    # for nutrient in daily_total:
+    #     deficit = required[nutrient] - daily_total[nutrient]
+
+    #     if deficit > 0:
+    #         sorted_df = df.sort_values(by={
+    #             "protein": "Protein (g)",
+    #             "carbs": "Carbohydrates (g)",
+    #             "fat": "Fats (g)",
+    #             "calories": "Calories (kcal)",
+    #             "iron": "Iron (mg)"
+    #         }[nutrient], ascending=False)
+
+    #         recs = []
+    #         for _, row in sorted_df.iterrows():
+    #             if row[{
+    #                 "protein": "Protein (g)",
+    #                 "carbs": "Carbohydrates (g)",
+    #                 "fat": "Fats (g)",
+    #                 "calories": "Calories (kcal)",
+    #                 "iron": "Iron (mg)"
+    #             }[nutrient]] > 5:
+    #                 recs.append(row["Dish Name"])
+                
+    #             if len(recs) == 2:
+    #                 break
+
+    #         suggestions[nutrient] = recs
     # ===== SUGGESTIONS =====
     suggestions = {}
+    
 
-    for nutrient in daily_total:
+    column_map = {
+    "protein": "Protein (g)",
+    "carbs": "Carbohydrates (g)",
+    "fat": "Fats (g)"
+    }
+
+    for nutrient in ["protein", "carbs", "fat"]:
         deficit = required[nutrient] - daily_total[nutrient]
 
-        if deficit > 0:
-            sorted_df = df.sort_values(by={
-                "protein": "Protein (g)",
-                "carbs": "Carbohydrates (g)",
-                "fat": "Fats (g)",
-                "calories": "Calories (kcal)",
-                "iron": "Iron (mg)"
-            }[nutrient], ascending=False)
+    if deficit > 0:
+        col = column_map[nutrient]
+        sorted_df = df.sort_values(by=col, ascending=False)
 
-            recs = []
-            for _, row in sorted_df.iterrows():
-                if row[{
-                    "protein": "Protein (g)",
-                    "carbs": "Carbohydrates (g)",
-                    "fat": "Fats (g)",
-                    "calories": "Calories (kcal)",
-                    "iron": "Iron (mg)"
-                }[nutrient]] > 5:
-                    recs.append(row["Dish Name"])
-                
-                if len(recs) == 2:
-                    break
+        recs = []
+        for _, row in sorted_df.iterrows():
+            if row[col] > (deficit * 0.1):
+                recs.append(row["Dish Name"])
 
-            suggestions[nutrient] = recs
+            if len(recs) == 2:
+                break
+
+        suggestions[nutrient] = recs
 
     return {
         "totals": daily_total,
