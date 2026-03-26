@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from model import calculate_nutrition
 import os
-import mysql.connector
+
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +35,7 @@ if os.environ.get("RENDER"):
 
 else:
     # 💻 Running locally → use MySQL
+    
     import mysql.connector
     conn = mysql.connector.connect(
         host="localhost",
