@@ -104,15 +104,24 @@ def register():
     email = data['email']
     password = data['password']
 
-    query = "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)"
-    
     try:
-        cursor.execute(query, (name, email, password))
+        if os.environ.get("RENDER"):
+            cursor.execute(
+                "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+                (name, email, password)
+            )
+        else:
+            cursor.execute(
+                "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
+                (name, email, password)
+            )
+
         conn.commit()
         return jsonify({"message": "User registered"})
-    except:
-        return jsonify({"error": "Email already exists"})
 
+    except Exception as e:
+        print(e)  # 🔥 VERY IMPORTANT for debugging
+        return jsonify({"error": "Email already exists"})
 
 
 
